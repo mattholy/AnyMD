@@ -1,7 +1,7 @@
 import { Plugin } from 'unified'
 import { visit } from 'unist-util-visit'
 import { Node, Parent } from 'unist'
-import { LinkNode, TextNode, MentionNode, activityPubOptions, RenderedNode } from '../types'
+import { LinkNode, TextNode, MentionNode, activityPubOptions, RenderedNode } from '../types.ts'
 
 const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubOptions) => {
     if (!option?.notToParseMention) {

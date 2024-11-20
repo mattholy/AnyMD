@@ -1,4 +1,4 @@
-import { parseMarkdown } from '../src/mdParser'
+import { parseMarkdown } from '../src/mdParser.ts'
 
 describe('Function parseMarkdown', () => {
     test('should parse markdown text to AST', () => {

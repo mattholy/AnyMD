@@ -3,8 +3,8 @@ import remarkParse from 'remark-parse'
 import remarkMath from 'remark-math'
 import remarkGfm from 'remark-gfm'
 import { Node } from 'unist'
-import activityPubPlugin from './parser/activityPubMention'
-import { ParserOptions } from './types'
+import activityPubPlugin from './parser/activityPubMention.ts'
+import { ParserOptions } from './types.ts'
 
 export function parseMarkdown(markdownText: string, option?: ParserOptions): Node {
   const processor = unified()
