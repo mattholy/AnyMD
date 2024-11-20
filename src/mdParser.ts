@@ -9,8 +9,8 @@ import { ParserOptions } from './types'
 export function parseMarkdown(markdownText: string, option?: ParserOptions): Node {
   const processor = unified()
     .use(remarkParse)
-    .use(remarkMath)
     .use(remarkGfm)
+    .use(remarkMath)
     .use(activityPubPlugin, option?.activityPubOptions ?? {})
 
   const ast = processor.parse(markdownText)

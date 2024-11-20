@@ -6,8 +6,8 @@ import activityPubPlugin from './parser/activityPubMention';
 export function parseMarkdown(markdownText, option) {
     const processor = unified()
         .use(remarkParse)
-        .use(remarkMath)
         .use(remarkGfm)
+        .use(remarkMath)
         .use(activityPubPlugin, option?.activityPubOptions ?? {});
     const ast = processor.parse(markdownText);
     const processedAst = processor.runSync(ast);
