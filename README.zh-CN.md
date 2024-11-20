@@ -30,7 +30,7 @@ npm install @mattholy/anymd
 
     const markdown = 'any markdown content'
 
-    const parsedAst = parseMarkdown(data.value)
+    const parsedAst = parseMarkdown(markdown)
     const renderedContent = renderAst2Vue(parsedAst)
 </script>
 <template>
@@ -118,7 +118,7 @@ npm install @mattholy/anymd
             mention: (node) => h(NText, { type: 'info' }, { default: () => [node.value] }),
         }
     }
-    const parsedAst = parseMarkdown(data.value)
+    const parsedAst = parseMarkdown(markdown)
     const renderedContent = renderAst2Vue(parsedAst, renderConfig)
 </script>
 <template>
