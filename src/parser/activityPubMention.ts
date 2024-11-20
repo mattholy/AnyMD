@@ -34,7 +34,6 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
             )
 
             visit(tree, 'text', (node: TextNode, index, parent: RenderedNode) => {
-                console.log(node, '父节点是', parent)
                 if (parent && parent.type === 'link' && parent.url.startsWith('mailto:')) {
                     return
                 }

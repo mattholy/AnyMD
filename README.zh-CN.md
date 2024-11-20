@@ -5,6 +5,7 @@
 **用你自己的方式渲染Markdown**
 
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/mattholy/AnyMD)
+[![codecov](https://codecov.io/gh/mattholy/AnyMD/graph/badge.svg?token=YFCGPBUV6X)](https://codecov.io/gh/mattholy/AnyMD)
 ![NPM Type Definitions](https://img.shields.io/npm/types/%40mattholy%2Fanymd)
 ![NPM Version](https://img.shields.io/npm/v/%40mattholy%2Fanymd)
 ![NPM Downloads](https://img.shields.io/npm/dy/%40mattholy%2Fanymd)
