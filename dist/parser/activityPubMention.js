@@ -32,7 +32,7 @@ const activityPubMention = (option) => {
                 if (parent && parent.type === 'link' && parent.url.startsWith('mailto:')) {
                     return;
                 }
-                const mentionRegex = /(@[a-zA-Z0-9_]+)(@[a-zA-Z0-9.-]+)?/g;
+                const mentionRegex = /(?:^|\s)@[a-zA-Z0-9_]+(?:@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})?(?=\s|$)/g;
                 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                 let match;
                 let newChildren = [];
