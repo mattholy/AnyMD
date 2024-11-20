@@ -4,11 +4,14 @@
 
 **用你自己的方式渲染Markdown**
 
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/mattholy/AnyMD)
-[![codecov](https://codecov.io/gh/mattholy/AnyMD/graph/badge.svg?token=YFCGPBUV6X)](https://codecov.io/gh/mattholy/AnyMD)
-![NPM Type Definitions](https://img.shields.io/npm/types/%40mattholy%2Fanymd)
-![NPM Version](https://img.shields.io/npm/v/%40mattholy%2Fanymd)
-![NPM Downloads](https://img.shields.io/npm/dy/%40mattholy%2Fanymd)
+
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/mattholy/AnyMD?style=flat-square)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/mattholy/AnyMD/codecov.yml?style=flat-square&label=Test)
+[![Codecov](https://img.shields.io/codecov/c/github/mattholy/AnyMD?style=flat-square)](https://codecov.io/gh/mattholy/AnyMD)
+![NPM Type Definitions](https://img.shields.io/npm/types/%40mattholy%2Fanymd?style=flat-square)
+![NPM Version](https://img.shields.io/npm/v/%40mattholy%2Fanymd?style=flat-square)
+![NPM Downloads](https://img.shields.io/npm/dy/%40mattholy%2Fanymd?style=flat-square)
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD?ref=badge_small)
 
 [中文](./README.zh-CN.md) | [English](./README.md)
