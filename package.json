@@ -1,0 +1,41 @@
+{
+  "name": "@mattholy/apmd",
+  "version": "0.0.1",
+  "description": "An open-source, customizable Markdown parser and renderer for ActivityPub messages with Typescript.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mattholy/activitypub-markdown"
+  },
+  "keywords": [
+    "markdown",
+    "activitypub",
+    "parser",
+    "renderer",
+    "open-source",
+    "typescript"
+  ],
+  "author": "Mattholy <smile.used@hotmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "katex": "^0.16.11",
+    "remark-directive": "^3.0.0",
+    "remark-gfm": "^4.0.0",
+    "remark-math": "^6.0.0",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/katex": "^0.16.7",
+    "@types/unist": "^3.0.3",
+    "@vue/runtime-core": "^3.5.13",
+    "typescript": "^5.6.3",
+    "vue": "^3.5.13"
+  }
+}
