@@ -27,12 +27,11 @@ describe('Function parseMarkdown', () => {
         expect(result.children[0].children[0].value).toBe('@')
         expect(result.children[0].children[1]).toHaveProperty('type', 'link')
         expect(result.children[0].children[1].url).toBe('mailto:123@abc.com')
-        expect
     })
 
     test('Dealing with single ActivityPub identifier with same origin', () => {
         const input = '@example'
-        const result = parseMarkdown(input) as any
+        const result = parseMarkdown(input, {}) as any
 
         if ('children' in result.children[0] && result.children[0].children[0]) {
             expect(result.children[0].children[0]).toHaveProperty('type', 'mention')
@@ -74,5 +73,14 @@ describe('Function parseMarkdown', () => {
             expect(result.children[0].children[1].children[0]).toHaveProperty('type', 'text')
             expect(result.children[0].children[1].children[0].value).toBe('test@example.com')
         }
+    })
+
+    test('should parse multiple email addresses and activitypub id', () => {
+        const input = 'Emails: @test1@example.com, test2@example.com'
+        const result = parseMarkdown(input) as any
+        console.debug(result.children[0].children[0])
+        expect(result).toBeDefined()
+        expect(result.children[0].children[1]).toHaveProperty('type', 'link')
+        expect(result.children[0].children[1].url).toBe('mailto:test2@example.com')
     })
 })
