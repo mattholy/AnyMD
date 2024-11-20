@@ -2,7 +2,7 @@ import { expect, test, describe } from 'vitest'
 import { renderAst2Vue, parseMarkdown } from '../src/index.ts'
 import { isVNode } from 'vue'
 
-describe('Function renderAst2Vue', () => {
+describe('Workflow renderAst2Vue', () => {
 
     test('Simple test for render default Heading1', () => {
         const input = '# Header1'
