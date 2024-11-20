@@ -1,5 +1,5 @@
 import { Node } from 'unist'
-import { VNode } from 'vue'
+import { VNode, Component } from 'vue'
 
 export interface RootNode extends Node {
     type: 'root'
@@ -157,6 +157,29 @@ export interface RenderOptions {
 }
 
 export interface customComponents {
+    root?: Component
+    paragraph?: Component
+    text?: Component
+    heading?: Component
+    emphasis?: Component
+    strong?: Component
+    inlineCode?: Component
+    code?: Component
+    blockquote?: Component
+    list?: Component
+    listItem?: Component
+    thematicBreak?: Component
+    break?: Component
+    link?: Component
+    image?: Component
+    table?: Component
+    tableRow?: Component
+    tableCell?: Component
+    delete?: Component
+    html?: Component
+    mention?: Component
+    inlineMath?: Component
+    math?: Component
 }
 
 export interface customRenderers {
