@@ -7,7 +7,7 @@ describe('Function parseMarkdown', () => {
         const result = parseMarkdown(input)
 
         expect(result).toBeDefined()
-        expect(result).toHaveProperty('type', 'root');
+        expect(result).toHaveProperty('type', 'root')
     })
 
     test('Dealing with single ActivityPub identifier', () => {
@@ -21,7 +21,6 @@ describe('Function parseMarkdown', () => {
     test('Not to parse ActivityPub identifier', () => {
         const input = '@123@abc.com'
         const result = parseMarkdown(input, { activityPubOptions: { notToParseMention: true } }) as any
-        console.log(result.children[0])
 
         expect(result.children[0].children.length).toBe(2)
         expect(result.children[0].children[0]).toHaveProperty('type', 'text')
