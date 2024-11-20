@@ -5,7 +5,9 @@
 Your next markdown renderer.
 **Make your markdown your style.**
 
-## Features
+## General
+
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD?ref=badge_large&issueType=license" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD.svg?type=large&issueType=license" align="right"/></a>
 
 - Type-safe
 - Parse markdown to AST
