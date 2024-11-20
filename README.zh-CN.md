@@ -2,27 +2,27 @@
 
 [中文](./README.zh-CN.md) | [English](./README.md)
 
-Your next markdown renderer.
-**Make your markdown your style.**
+你的下一个 Markdown 渲染器。
+**让你的 Markdown 有你的风格。**
 
-## Features
+## 特性
 
-- Type-safe
-- Parse markdown to AST
-- Choose anything you want to render
+- 类型安全
+- 将 Markdown 解析为 AST
+- 自由选择你想要的渲染方式
 
-**Supported**
+**支持**
 - [x] Vue
 - [ ] React
 
-## Install
+## 安装
 ```bash
 npm install @mattholy/anymd
 ```
 
-## Usage
+## 使用
 ### Vue
-A very default usage of AnyMD with Vue.
+一个使用 AnyMD 和 Vue 的默认示例。
 ```vue
 <script setup lang="ts">
     import { parseMarkdown, renderAst2Vue } from '@mattholy/anymd'
@@ -37,7 +37,7 @@ A very default usage of AnyMD with Vue.
     <component v-for="(node, index) in renderedContent" :key="index" :is="node"/>
 </template>
 ```
-Another example with custom renderers using *NaiveUI*.
+比如你可以使用*NaiveUI*来自定义渲染器。
 ```vue
 <script setup lang="ts">
     import {
@@ -202,4 +202,3 @@ interface customRenderers {
     inlineMath?: (node: InlineMathNode) => VNode
     math?: (node: MathNode) => VNode
 }
-```
