@@ -1,13 +1,22 @@
-# AnyMD
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD?ref=badge_shield)
+<h1 align="center">AnyMD</h1>
 
+<div align="center">
+
+**Make your markdown your style.**
+
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/mattholy/AnyMD)
+![NPM Type Definitions](https://img.shields.io/npm/types/%40mattholy%2Fanymd)
+![NPM Version](https://img.shields.io/npm/v/%40mattholy%2Fanymd)
+![NPM Downloads](https://img.shields.io/npm/dy/%40mattholy%2Fanymd)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD?ref=badge_small)
 
 [中文](./README.zh-CN.md) | [English](./README.md)
 
-Your next markdown renderer.
-**Make your markdown your style.**
+</div>
 
-## Features
+## General
+
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD?ref=badge_large&issueType=license" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD.svg?type=large&issueType=license" align="right"/></a>
 
 - Type-safe
 - Parse markdown to AST

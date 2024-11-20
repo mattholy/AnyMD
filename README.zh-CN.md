@@ -1,11 +1,21 @@
-# AnyMD
+<h1 align="center">AnyMD</h1>
+
+<div align="center">
+
+**用你自己的方式渲染Markdown**
+
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/mattholy/AnyMD)
+![NPM Type Definitions](https://img.shields.io/npm/types/%40mattholy%2Fanymd)
+![NPM Version](https://img.shields.io/npm/v/%40mattholy%2Fanymd)
+![NPM Downloads](https://img.shields.io/npm/dy/%40mattholy%2Fanymd)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD?ref=badge_small)
 
 [中文](./README.zh-CN.md) | [English](./README.md)
 
-你的下一个 Markdown 渲染器。
-**让你的 Markdown 有你的风格。**
+</div>
 
-## 特性
+## 概览
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD?ref=badge_large&issueType=license" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD.svg?type=large&issueType=license" align="right"/></a>
 
 - 类型安全
 - 将 Markdown 解析为 AST
@@ -14,6 +24,7 @@
 **支持**
 - [x] Vue
 - [ ] React
+
 
 ## 安装
 ```bash
