@@ -4,9 +4,9 @@ import remarkMath from 'remark-math'
 import remarkGfm from 'remark-gfm'
 import { Node } from 'unist'
 import activityPubPlugin from './parser/activityPubMention.ts'
-import { ParserOptions } from './types.ts'
+import { ParserOptions, RenderedNode } from './types.ts'
 
-export function parseMarkdown(markdownText: string, option?: ParserOptions): Node {
+export function parseMarkdown(markdownText: string, option?: ParserOptions): RenderedNode {
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm)
@@ -15,5 +15,5 @@ export function parseMarkdown(markdownText: string, option?: ParserOptions): Nod
 
   const ast = processor.parse(markdownText)
   const processedAst = processor.runSync(ast)
-  return processedAst
+  return processedAst as RenderedNode
 }
