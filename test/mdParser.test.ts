@@ -1,4 +1,5 @@
-import { parseMarkdown } from '../src/mdParser.ts'
+import { expect, test, describe } from 'vitest'
+import { parseMarkdown } from '../src/mdParser'
 
 describe('Function parseMarkdown', () => {
     test('should parse markdown text to AST', () => {

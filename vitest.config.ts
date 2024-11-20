@@ -5,8 +5,11 @@ export default defineConfig({
         globals: true,
         environment: 'node',
         coverage: {
-            provider: 'v8',
+            provider: 'c8' as 'v8',
             reporter: ['text', 'json', 'html'],
+        },
+        alias: {
+            '@': './src',
         },
     },
 });
