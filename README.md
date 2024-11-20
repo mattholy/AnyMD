@@ -1,4 +1,7 @@
 # AnyMD
+
+[中文](./README.zh-CN.md) | [English](./README.md)
+
 Your next markdown renderer.
 **Make your markdown your style.**
 
@@ -12,6 +15,10 @@ Your next markdown renderer.
 - [x] Vue
 - [ ] React
 
+## Install
+```bash
+npm install @mattholy/anymd
+```
 
 ## Usage
 ### Vue
