@@ -4,30 +4,36 @@ const activityPubMention = (option) => {
         return (tree) => {
             visit(tree, 'link', (node, index, parent) => {
                 if (node.url.startsWith('mailto:')) {
-                    let textNode = {
-                        type: 'text',
-                        value: node.children.map((child) => child.value).join(''),
-                        position: node.position,
-                    };
-                    if (parent && typeof index === 'number') {
-                        parent.children[index] = textNode;
-                        if (index > 0 && parent.children[index - 1].type === 'text') {
-                            const prevNode = parent.children[index - 1];
-                            prevNode.value += textNode.value;
-                            parent.children.splice(index, 1);
-                            textNode = prevNode;
-                            index--;
-                        }
-                        if (index < parent.children.length - 1 && parent.children[index + 1].type === 'text') {
-                            const nextNode = parent.children[index + 1];
-                            textNode.value += nextNode.value;
-                            parent.children.splice(index + 1, 1);
+                    if (parent && 'children' in parent && typeof index === 'number') {
+                        let newChildren = [];
+                        let elder = parent.children[index - 1];
+                        if ('value' in elder && typeof elder.value === 'string' && elder.value.endsWith('@')) {
+                            newChildren = parent.children;
+                            newChildren[index] = node.children[0];
+                            for (let i = 0; i < newChildren.length - 1; i++) {
+                                if (newChildren[i].type === 'text' && newChildren[i + 1].type === 'text') {
+                                    newChildren[i].value += newChildren[i + 1].value;
+                                    if (newChildren[i].position && newChildren[i + 1].position) {
+                                        if (newChildren[i].position !== undefined && newChildren[i + 1].position !== undefined) {
+                                            newChildren[i].position.end = newChildren[i + 1].position.end;
+                                        }
+                                    }
+                                    newChildren.splice(i + 1, 1);
+                                    i--;
+                                }
+                            }
+                            parent.children = newChildren;
                         }
                     }
                 }
             });
             visit(tree, 'text', (node, index, parent) => {
-                const mentionRegex = /@([a-zA-Z0-9_]+)(@[a-zA-Z0-9.-]+)?/g;
+                console.log(node, '父节点是', parent);
+                if (parent && parent.type === 'link' && parent.url.startsWith('mailto:')) {
+                    return;
+                }
+                const mentionRegex = /(@[a-zA-Z0-9_]+)(@[a-zA-Z0-9.-]+)?/g;
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                 let match;
                 let newChildren = [];
                 let lastIndex = 0;
@@ -39,11 +45,21 @@ const activityPubMention = (option) => {
                             position: undefined,
                         });
                     }
-                    newChildren.push({
-                        type: 'mention',
-                        value: match[0],
-                        position: undefined,
-                    });
+                    const mentionValue = match[0];
+                    if (emailRegex.test(mentionValue)) {
+                        newChildren.push({
+                            type: 'text',
+                            value: mentionValue,
+                            position: undefined,
+                        });
+                    }
+                    else {
+                        newChildren.push({
+                            type: 'mention',
+                            value: mentionValue,
+                            position: undefined,
+                        });
+                    }
                     lastIndex = mentionRegex.lastIndex;
                 }
                 if (lastIndex < node.value.length) {
@@ -53,7 +69,7 @@ const activityPubMention = (option) => {
                         position: undefined,
                     });
                 }
-                if (newChildren.length > 0 && parent && typeof index === 'number') {
+                if (newChildren.length > 0 && parent && typeof index === 'number' && 'children' in parent) {
                     parent.children.splice(index, 1, ...newChildren);
                 }
             });
