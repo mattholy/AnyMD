@@ -1,1 +1,46 @@
-node_modules
+# 忽略 Node.js 依赖
+node_modules/
+ 
+# 忽略日志文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 忽略编译输出
+dist/
+build/
+
+# 忽略环境文件
+.env
+.env.local
+.env.*.local
+
+# 忽略测试覆盖率报告
+coverage/
+
+# 忽略临时文件和操作系统生成的文件
+*.DS_Store
+Thumbs.db
+
+# 忽略 IDE 和编辑器生成的配置文件
+.idea/
+.vscode/
+*.sublime-workspace
+
+# 忽略 lock 文件，如果你在团队中不使用 yarn.lock 或 package-lock.json 控制版本
+# 你可以根据项目的锁文件管理策略选择是否保留它们
+# yarn.lock
+# package-lock.json
+
+# TypeScript 构建输出 (如果适用)
+*.tsbuildinfo
+
+# GitHub 工作流生成的临时文件
+.github/
+
+# 忽略文档文件
+docs/
+
+# 忽略一些系统生成的临时文件
+*.log
+*.swp
