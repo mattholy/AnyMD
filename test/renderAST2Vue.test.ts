@@ -1,6 +1,43 @@
 import { expect, test, describe } from 'vitest'
 import { renderAst2Vue, parseMarkdown } from '../src/index.ts'
-import { isVNode } from 'vue'
+import { isVNode, VNode } from 'vue'
+
+describe('Unit test for renderAst2Vue', () => {
+
+    test('Unit test fot code block default render', () => {
+        const input = {
+            "type": "code",
+            "lang": "python",
+            "meta": "[1,2]",
+            "value": "import pandas as pd\nprint(pandas)",
+            "position": {
+                "start": {
+                    "line": 1,
+                    "column": 1,
+                    "offset": 0
+                },
+                "end": {
+                    "line": 4,
+                    "column": 4,
+                    "offset": 53
+                }
+            }
+        }
+        const result = renderAst2Vue(input)
+
+        expect(result).toBeDefined()
+        expect(result).toBeInstanceOf(Array)
+        expect(isVNode(result[0])).toBe(true)
+        expect(result[0].type).toBe('pre')
+        expect(result[0].props).toHaveProperty('data-node-style', 'default')
+        expect(result[0].props).toHaveProperty('data-node-type', 'code')
+        expect(isVNode((result[0].children! as any).default())).toBe(true)
+        expect(((result[0].children! as any).default() as VNode).type).toBe('code')
+        expect(((result[0].children! as any).default() as VNode).props).toHaveProperty('data-node-style', 'default')
+        expect(((result[0].children! as any).default() as VNode).children).toBe('import pandas as pd\nprint(pandas)')
+    })
+
+})
 
 describe('Workflow renderAst2Vue', () => {
 
