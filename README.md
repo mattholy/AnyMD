@@ -24,6 +24,8 @@
 - Type-safe
 - Parse markdown to AST
 - Choose anything you want to render
+- Especially suitable for markdown returned by large language models
+- Support registering custom containers
 
 
 **Supported**
