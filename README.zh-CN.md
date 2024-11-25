@@ -155,7 +155,7 @@ interface ParserOptions {
 }
 
 interface activityPubOptions {
-    notToParseMention?: boolean
+    notToParseActivityPub?: boolean
 }
 ```
 ### Render
@@ -168,7 +168,7 @@ interface RenderOptions {
     customRenderers?: customRenderers
 }
 
-interface customComponents {
+export interface customComponents {
     root?: Component
     paragraph?: Component
     text?: Component
@@ -192,9 +192,10 @@ interface customComponents {
     mention?: Component
     inlineMath?: Component
     math?: Component
+    hashtag?: Component
 }
 
-interface customRenderers {
+export interface customRenderers {
     root?: (node: RootNode) => VNode
     text?: (node: TextNode) => VNode
     paragraph?: (node: ParagraphNode) => VNode
@@ -218,4 +219,9 @@ interface customRenderers {
     mention?: (node: MentionNode) => VNode
     inlineMath?: (node: InlineMathNode) => VNode
     math?: (node: MathNode) => VNode
+    hashtag?: (node: HashTagNode) => VNode
 }
+```
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2FAnyMD?ref=badge_large)
