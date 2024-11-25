@@ -34,10 +34,10 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
             )
 
             visit(tree, 'text', (node: TextNode, index, parent: RenderedNode) => {
-                if (parent && parent.type === 'link' && parent.url.startsWith('mailto:')) {
+                if (parent && parent.type === 'link') {
                     return
                 }
-                const hashtagRegex = /(?:^|\s)(#[\p{L}]+)(?=\P{L}|$)/gu
+                const hashtagRegex = /(?:^|\s)(#[\p{L}0-9]+)(?=\P{L}|$)/gu
                 let match
                 let newChildren: Node[] = []
                 let lastIndex = 0
@@ -45,7 +45,7 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                     if (match.index > lastIndex) {
                         newChildren.push({
                             type: 'text',
-                            value: node.value.slice(lastIndex, match.index),
+                            value: node.value.slice(lastIndex, match.index + 1),
                             position: undefined,
                         } as TextNode)
                     }
@@ -74,7 +74,7 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
             })
 
             visit(tree, 'text', (node: TextNode, index, parent: RenderedNode) => {
-                if (parent && parent.type === 'link' && parent.url.startsWith('mailto:')) {
+                if (parent && parent.type === 'link') {
                     return
                 }
                 const mentionRegex = /(?:^|\s)@[a-zA-Z0-9_]+(?:@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})?(?=\s|$)/g

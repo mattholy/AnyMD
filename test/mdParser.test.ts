@@ -28,6 +28,38 @@ describe('Function parseMarkdown', () => {
         }
     })
 
+    test('Dealing with single ActivityPub hashtag on the end', () => {
+        const input = 'Have a #test'
+        const result = parseMarkdown(input) as any
+
+        console.debug(result.children[0])
+        expect(result.children[0].children[0]).toHaveProperty('type', 'text')
+        expect(result.children[0].children[0].value).toBe('Have a ')
+        expect(result.children[0].children[1]).toHaveProperty('type', 'hashtag')
+        expect(result.children[0].children[1].value).toBe('#test')
+    })
+
+    test('Dealing with single ActivityPub hashtag on the beginning', () => {
+        const input = '#test should be discussed'
+        const result = parseMarkdown(input) as any
+
+        console.debug(result.children[0])
+        if ('children' in result.children[0] && result.children[0].children[0]) {
+            expect(result.children[0].children[0]).toHaveProperty('type', 'hashtag')
+        }
+    })
+
+    test('Dealing with single ActivityPub hashtag in the middle', () => {
+        const input = 'my #test is good'
+        const result = parseMarkdown(input) as any
+
+        console.debug(result.children[0])
+        expect(result.children[0].children[0]).toHaveProperty('type', 'text')
+        expect(result.children[0].children[0].value).toBe('my ')
+        expect(result.children[0].children[1]).toHaveProperty('type', 'hashtag')
+        expect(result.children[0].children[1].value).toBe('#test')
+    })
+
     test('Dealing with multiple ActivityPub hashtags in text', () => {
         const input = '这是一个话题标签 #阿斯顿 欢迎讨论。 #讨论'
         const result = parseMarkdown(input) as any
