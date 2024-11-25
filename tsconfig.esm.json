@@ -1,0 +1,7 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "module": "ESNext", // ESM 模块
+        "outDir": "./dist/esm" // 输出到 ESM 目录
+    }
+}

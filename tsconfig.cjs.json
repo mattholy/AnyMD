@@ -1,0 +1,7 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "module": "CommonJS", // CommonJS 模块
+        "outDir": "./dist/cjs" // 输出到 CJS 目录
+    }
+}

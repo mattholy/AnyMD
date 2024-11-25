@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES2020", // 目标 JavaScript 版本
-    "module": "ESNext", // 模块格式
+    "module": "ESNext", // 默认模块格式为 ESM
     "moduleResolution": "Node", // Node.js 模块解析方式
     "declaration": true, // 生成 .d.ts 文件
-    "outDir": "dist", // 输出目录
-    "rootDir": "src", // 源文件目录
+    "declarationDir": "./dist/types", // 声明文件输出目录
+    "outDir": "./dist/esm", // 默认 ESM 输出目录
+    "rootDir": "./src", // 源文件目录
     "strict": true, // 启用严格模式
     "esModuleInterop": true, // 支持 CommonJS 和 ESM 互操作
     "skipLibCheck": true, // 跳过库类型检查

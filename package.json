@@ -3,15 +3,22 @@
   "version": "0.1.2",
   "description": "An open-source, customizable Markdown parser and renderer with Typescript.",
   "type": "module",
-  "types": "dist/index.d.ts",
+  "types": "dist/types/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc --project tsconfig.esm.json",
+    "build:cjs": "tsc --project tsconfig.cjs.json",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage"
-  },
-  "exports": {
-    ".": "./dist/index.d.ts"
   },
   "repository": {
     "type": "git",
