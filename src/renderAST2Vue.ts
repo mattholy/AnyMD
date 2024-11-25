@@ -31,7 +31,7 @@ import {
     RenderOptions,
     customComponents,
     customRenderers
-} from './types.ts'
+} from './types'
 
 export function renderAst2Vue(ast: Node, options?: RenderOptions): VNode[] {
     const renderedNodes = renderPipe(ast as RenderedNode, options?.customRenderers, options?.customComponents)

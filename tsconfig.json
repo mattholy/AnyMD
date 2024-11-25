@@ -1,33 +1,26 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "allowImportingTsExtensions": true,
-    "emitDeclarationOnly": true,
-    "declaration": true,
-    "outDir": "dist",
-    "rootDir": "src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "target": "ES2020", // 目标 JavaScript 版本
+    "module": "ESNext", // 模块格式
+    "moduleResolution": "Node", // Node.js 模块解析方式
+    "declaration": true, // 生成 .d.ts 文件
+    "outDir": "dist", // 输出目录
+    "rootDir": "src", // 源文件目录
+    "strict": true, // 启用严格模式
+    "esModuleInterop": true, // 支持 CommonJS 和 ESM 互操作
+    "skipLibCheck": true, // 跳过库类型检查
+    "sourceMap": true, // 生成 Source Map
     "types": [
-      "vitest"
-    ]
+      "node"
+    ] // 加载 Node.js 类型
   },
   "include": [
     "src"
-  ],
+  ], // 包含的文件
   "exclude": [
     "node_modules",
-    "**/__tests__/*",
+    "dist",
     "**/*.test.ts",
     "test"
-  ]
+  ] // 排除的文件
 }
