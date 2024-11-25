@@ -231,5 +231,11 @@ const renderDefault = (node: RenderedNode, customRenderers?: customRenderers, cu
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
                 { default: () => node.value }
             )
+        case 'hashtag':
+            return h(
+                'span',
+                { 'data-node-type': node.type, 'data-node-style': 'default' },
+                { default: () => node.value }
+            )
     }
 }

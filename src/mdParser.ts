@@ -3,7 +3,7 @@ import remarkParse from 'remark-parse'
 import remarkMath from 'remark-math'
 import remarkGfm from 'remark-gfm'
 import { Node } from 'unist'
-import activityPubPlugin from './parser/activityPubMention.ts'
+import activityPubPlugin from './parser/activityPub.ts'
 import { ParserOptions, RenderedNode } from './types.ts'
 
 export function parseMarkdown(markdownText: string, option?: ParserOptions): RenderedNode {

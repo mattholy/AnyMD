@@ -1,10 +1,10 @@
 import { Plugin } from 'unified'
 import { visit } from 'unist-util-visit'
 import { Node, Parent } from 'unist'
-import { LinkNode, TextNode, MentionNode, activityPubOptions, RenderedNode } from '../types.ts'
+import { LinkNode, TextNode, MentionNode, HashTagNode, activityPubOptions, RenderedNode } from '../types.ts'
 
 const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubOptions) => {
-    if (!option?.notToParseMention) {
+    if (!option?.notToParseActivityPub) {
         return (tree) => {
             visit(tree, 'link', (node: LinkNode, index, parent: RenderedNode) => {
                 if (node.url.startsWith('mailto:')) {
@@ -32,6 +32,46 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                 }
             }
             )
+
+            visit(tree, 'text', (node: TextNode, index, parent: RenderedNode) => {
+                if (parent && parent.type === 'link' && parent.url.startsWith('mailto:')) {
+                    return
+                }
+                const hashtagRegex = /(?:^|\s)(#[\p{L}]+)(?=\P{L}|$)/gu
+                let match
+                let newChildren: Node[] = []
+                let lastIndex = 0
+                while ((match = hashtagRegex.exec(node.value)) !== null) {
+                    if (match.index > lastIndex) {
+                        newChildren.push({
+                            type: 'text',
+                            value: node.value.slice(lastIndex, match.index),
+                            position: undefined,
+                        } as TextNode)
+                    }
+
+                    const hashtagValue = match[1]
+                    newChildren.push({
+                        type: 'hashtag',
+                        value: hashtagValue,
+                        position: undefined,
+                    } as HashTagNode)
+
+                    lastIndex = hashtagRegex.lastIndex
+                }
+
+                if (lastIndex < node.value.length) {
+                    newChildren.push({
+                        type: 'text',
+                        value: node.value.slice(lastIndex),
+                        position: undefined,
+                    } as TextNode)
+                }
+
+                if (newChildren.length > 0 && parent && typeof index === 'number' && 'children' in parent) {
+                    parent.children.splice(index, 1, ...(newChildren as RenderedNode[]))
+                }
+            })
 
             visit(tree, 'text', (node: TextNode, index, parent: RenderedNode) => {
                 if (parent && parent.type === 'link' && parent.url.startsWith('mailto:')) {

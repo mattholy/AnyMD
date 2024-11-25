@@ -116,6 +116,11 @@ export interface MentionNode extends Node {
     value: string
 }
 
+export interface HashTagNode extends Node {
+    type: 'hashtag'
+    value: string
+}
+
 export interface InlineMathNode extends Node {
     type: 'inlineMath'
     value: string
@@ -150,6 +155,7 @@ export type RenderedNode =
     | MentionNode
     | InlineMathNode
     | MathNode
+    | HashTagNode
 
 export interface RenderOptions {
     customComponents?: customComponents
@@ -180,6 +186,7 @@ export interface customComponents {
     mention?: Component
     inlineMath?: Component
     math?: Component
+    hashtag?: Component
 }
 
 export interface customRenderers {
@@ -206,6 +213,7 @@ export interface customRenderers {
     mention?: (node: MentionNode) => VNode
     inlineMath?: (node: InlineMathNode) => VNode
     math?: (node: MathNode) => VNode
+    hashtag?: (node: HashTagNode) => VNode
 }
 
 export interface ParserOptions {
@@ -213,5 +221,5 @@ export interface ParserOptions {
 }
 
 export interface activityPubOptions {
-    notToParseMention?: boolean
+    notToParseActivityPub?: boolean
 }
