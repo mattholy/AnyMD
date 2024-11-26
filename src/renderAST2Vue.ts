@@ -248,7 +248,7 @@ const renderDefault = (node: RenderedNode, customRenderers?: customRenderers, cu
                 'span',
                 //@ts-ignore
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => 'Node Not Recognized Error, need to report to author.' }
+                { default: () => 'Node Not Recognized Error, need to report to author at https://github.com/mattholy/AnyMD/issues/new' }
             )
     }
 }
