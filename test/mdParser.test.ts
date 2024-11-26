@@ -163,4 +163,13 @@ describe('Function parseMarkdown', () => {
         expect(result.children[0].children[0]).toHaveProperty('type', 'inlineCode')
         expect(result.children[0].children[0].value).toBe('a :smile: emoji')
     })
+
+    test('should not parse emoji when notToParseActivityPub to be set', () => {
+        const input = 'a :smile: emoji'
+        const result = parseMarkdown(input, { activityPubOptions: { notToParseActivityPub: true } }) as any
+        console.debug(result.children[0].children)
+        expect(result).toBeDefined()
+        expect(result.children[0].children[0]).toHaveProperty('type', 'text')
+        expect(result.children[0].children[0].value).toBe('a :smile: emoji')
+    })
 })
