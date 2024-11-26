@@ -161,6 +161,7 @@ export type RenderedNode =
     | InlineMathNode
     | MathNode
     | HashTagNode
+    | EmojiNode
 
 export interface RenderOptions {
     customComponents?: customComponents
@@ -192,6 +193,7 @@ export interface customComponents {
     inlineMath?: Component
     math?: Component
     hashtag?: Component
+    emoji?: Component
 }
 
 export interface customRenderers {
@@ -219,6 +221,7 @@ export interface customRenderers {
     inlineMath?: (node: InlineMathNode) => VNode
     math?: (node: MathNode) => VNode
     hashtag?: (node: HashTagNode) => VNode
+    emoji?: (node: EmojiNode) => VNode
 }
 
 export interface ParserOptions {
