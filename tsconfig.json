@@ -18,10 +18,4 @@
   "include": [
     "src"
   ], // 包含的文件
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "test"
-  ] // 排除的文件
 }
