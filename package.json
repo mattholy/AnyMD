@@ -1,18 +1,17 @@
 {
   "name": "@mattholy/anymd",
-  "version": "0.1.5",
+  "version": "1.0.0",
   "description": "An open-source, customizable Markdown parser and renderer with Typescript.",
   "type": "module",
   "types": "dist/types/index.d.ts",
   "module": "dist/esm/index.js",
   "exports": {
-    ".": {
-      "import": "./dist/esm/index.js",
-      "types": "./dist/types/index.d.ts"
-    }
+    ".": "./dist/esm/index.js",
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage"
