@@ -237,5 +237,18 @@ const renderDefault = (node: RenderedNode, customRenderers?: customRenderers, cu
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
                 { default: () => node.value }
             )
+        case 'emoji':
+            return h(
+                'span',
+                { 'data-node-type': node.type, 'data-node-style': 'default' },
+                { default: () => node.value }
+            )
+        default:
+            return h(
+                'span',
+                //@ts-ignore
+                { 'data-node-type': node.type, 'data-node-style': 'default' },
+                { default: () => 'Node Not Recognized Error, need to report to author.' }
+            )
     }
 }
