@@ -1,6 +1,6 @@
 {
   "name": "@mattholy/anymd",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "An open-source, customizable Markdown parser and renderer with Typescript.",
   "type": "module",
   "types": "dist/types/index.d.ts",
