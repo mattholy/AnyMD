@@ -1,7 +1,7 @@
 import { Plugin } from 'unified'
 import { visit } from 'unist-util-visit'
 import { Node, Parent } from 'unist'
-import { LinkNode, TextNode, MentionNode, HashTagNode, activityPubOptions, RenderedNode } from '../types'
+import { LinkNode, TextNode, MentionNode, HashTagNode, activityPubOptions, RenderedNode, EmojiNode } from '../types'
 
 const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubOptions) => {
     if (!option?.notToParseActivityPub) {
@@ -37,7 +37,7 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                 if (parent && parent.type === 'link') {
                     return
                 }
-                const hashtagRegex = /(?:^|\s)(#[\p{L}0-9]+)(?=\P{L}|$)/gu
+                const hashtagRegex = /(?<=^|\s)(#[\p{L}0-9]+)(?=\P{L}|$)/gu
                 let match
                 let newChildren: Node[] = []
                 let lastIndex = 0
@@ -45,7 +45,7 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                     if (match.index > lastIndex) {
                         newChildren.push({
                             type: 'text',
-                            value: node.value.slice(lastIndex, match.index + 1),
+                            value: node.value.slice(lastIndex, match.index),
                             position: undefined,
                         } as TextNode)
                     }
@@ -77,7 +77,48 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                 if (parent && parent.type === 'link') {
                     return
                 }
-                const mentionRegex = /(?:^|\s)@[a-zA-Z0-9_]+(?:@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})?(?=\s|$)/g
+                const emojiRegex = /(?<=^|\s):[a-zA-Z0-9_]+:(?=\s|$)/g
+                let match
+                let newChildren: Node[] = []
+                let lastIndex = 0
+
+                while ((match = emojiRegex.exec(node.value)) !== null) {
+                    if (match.index > lastIndex) {
+                        newChildren.push({
+                            type: 'text',
+                            value: node.value.slice(lastIndex, match.index),
+                            position: undefined,
+                        } as TextNode)
+                    }
+
+                    const emojiValue = match[0]
+                    newChildren.push({
+                        type: 'emoji',
+                        value: emojiValue.slice(1, -1),
+                        position: undefined,
+                    } as EmojiNode)
+
+                    lastIndex = emojiRegex.lastIndex
+                }
+
+                if (lastIndex < node.value.length) {
+                    newChildren.push({
+                        type: 'text',
+                        value: node.value.slice(lastIndex),
+                        position: undefined,
+                    } as TextNode)
+                }
+
+                if (newChildren.length > 0 && parent && typeof index === 'number' && 'children' in parent) {
+                    parent.children.splice(index, 1, ...(newChildren as RenderedNode[]))
+                }
+            })
+
+            visit(tree, 'text', (node: TextNode, index, parent: RenderedNode) => {
+                if (parent && parent.type === 'link') {
+                    return
+                }
+                const mentionRegex = /(?<=^|\s)@[a-zA-Z0-9_]+(?:@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})?(?=\s|$)/g
                 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
                 let match
                 let newChildren: Node[] = []

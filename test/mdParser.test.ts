@@ -84,7 +84,7 @@ describe('Function parseMarkdown', () => {
     test('Dealing with single ActivityPub identifier with same origin', () => {
         const input = '@example'
         const result = parseMarkdown(input, {}) as any
-
+        console.debug(result.children[0].children)
         if ('children' in result.children[0] && result.children[0].children[0]) {
             expect(result.children[0].children[0]).toHaveProperty('type', 'mention')
         }
@@ -93,11 +93,21 @@ describe('Function parseMarkdown', () => {
     test('should parse GFM task list', () => {
         const input = '- [x] Task 1\n- [ ] Task 2'
         const result = parseMarkdown(input) as any
-
+        console.debug(result.children[0].children)
         expect(result).toBeDefined()
         expect(result.children[0].children[0]).toHaveProperty('type', 'listItem')
         expect(result.children[0].children[0].checked).toBe(true)
         expect(result.children[0].children[1].checked).toBe(false)
+    })
+
+    test('should parse list', () => {
+        const input = '- Task 1\n- Task 2'
+        const result = parseMarkdown(input) as any
+        console.debug(result.children[0].children)
+        expect(result).toBeDefined()
+        expect(result.children[0].children[0]).toHaveProperty('type', 'listItem')
+        expect(result.children[0].children[0].checked).toBe(null)
+        expect(result.children[0].children[1].checked).toBe(null)
     })
 
     test('should parse inline math', () => {
@@ -130,9 +140,27 @@ describe('Function parseMarkdown', () => {
     test('should parse multiple email addresses and activitypub id', () => {
         const input = 'Emails: @test1@example.com, test2@example.com'
         const result = parseMarkdown(input) as any
-        console.debug(result.children[0].children[0])
+        console.debug(result.children[0].children)
         expect(result).toBeDefined()
         expect(result.children[0].children[1]).toHaveProperty('type', 'link')
         expect(result.children[0].children[1].url).toBe('mailto:test2@example.com')
+    })
+
+    test('should parse emoji', () => {
+        const input = 'a :smile: emoji'
+        const result = parseMarkdown(input) as any
+        console.debug(result.children[0].children)
+        expect(result).toBeDefined()
+        expect(result.children[0].children[1]).toHaveProperty('type', 'emoji')
+        expect(result.children[0].children[1].value).toBe('smile')
+    })
+
+    test('should not parse emoji in code', () => {
+        const input = '`a :smile: emoji`'
+        const result = parseMarkdown(input) as any
+        console.debug(result.children[0].children)
+        expect(result).toBeDefined()
+        expect(result.children[0].children[0]).toHaveProperty('type', 'inlineCode')
+        expect(result.children[0].children[0].value).toBe('a :smile: emoji')
     })
 })

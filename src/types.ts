@@ -16,6 +16,11 @@ export interface TextNode extends Node {
     value: string
 }
 
+export interface EmojiNode extends Node {
+    type: 'emoji'
+    value: string
+}
+
 export interface HeadingNode extends Node {
     type: 'heading'
     depth: number
