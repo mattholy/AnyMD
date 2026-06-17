@@ -38,8 +38,19 @@ export function renderAst2Vue(ast: Node, options?: RenderOptions): VNode[] {
     return Array.isArray(renderedNodes) ? renderedNodes : [renderedNodes]
 }
 
-const renderPipe = (node: RenderedNode, customRenderers?: customRenderers, customComponents?: customComponents): VNode | VNode[] => {
-    if (customRenderers && node.type in customRenderers) {
+const renderPipe = (
+    node: RenderedNode,
+    customRenderers?: customRenderers,
+    customComponents?: customComponents
+): VNode | VNode[] => {
+    if (node.type === 'containerDirective' && customRenderers?.customContainers) {
+        return customRenderers.customContainers(node, {
+            name: node.name,
+            attributes: node.attributes ?? {},
+            renderChildren: () => renderChildren(node, customRenderers, customComponents)
+        })
+    }
+    else if (customRenderers && node.type in customRenderers) {
         return (customRenderers[node.type] as (node: RenderedNode) => VNode | VNode[])(node)
     }
     else if (customComponents && node.type in customComponents) {
@@ -64,7 +75,11 @@ const renderPipe = (node: RenderedNode, customRenderers?: customRenderers, custo
     }
 }
 
-const renderChildren = (node: { children?: RenderedNode[] }, customRenderers?: customRenderers, customComponents?: customComponents): VNode[] => {
+const renderChildren = (
+    node: { children?: RenderedNode[] },
+    customRenderers?: customRenderers,
+    customComponents?: customComponents
+): VNode[] => {
     return (node.children || []).flatMap((i) => renderPipe(i, customRenderers, customComponents))
 }
 
@@ -85,7 +100,11 @@ const sanitizeUrl = (url?: string, allowedProtocols = ['http:', 'https:']): stri
     return trimmedUrl
 }
 
-const renderDefault = (node: RenderedNode, customRenderers?: customRenderers, customComponents?: customComponents): VNode | VNode[] => {
+const renderDefault = (
+    node: RenderedNode,
+    customRenderers?: customRenderers,
+    customComponents?: customComponents
+): VNode | VNode[] => {
     switch (node.type) {
         case 'root':
             return h(
@@ -244,6 +263,36 @@ const renderDefault = (node: RenderedNode, customRenderers?: customRenderers, cu
                 'span',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
                 { default: () => node.value }
+            )
+        case 'containerDirective':
+            return h(
+                customComponents?.containerDirective ?? 'div',
+                {
+                    'data-node-type': node.type,
+                    'data-node-name': node.name,
+                    'data-node-style': 'default'
+                },
+                { default: () => renderChildren(node, customRenderers, customComponents) }
+            )
+        case 'leafDirective':
+            return h(
+                customComponents?.leafDirective ?? 'div',
+                {
+                    'data-node-type': node.type,
+                    'data-node-name': node.name,
+                    'data-node-style': 'default'
+                },
+                { default: () => renderChildren(node, customRenderers, customComponents) }
+            )
+        case 'textDirective':
+            return h(
+                customComponents?.textDirective ?? 'span',
+                {
+                    'data-node-type': node.type,
+                    'data-node-name': node.name,
+                    'data-node-style': 'default'
+                },
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'mention':
             return h(

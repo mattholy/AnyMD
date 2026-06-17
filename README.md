@@ -54,18 +54,52 @@ A very default usage of AnyMD with Vue.
     <component v-for="(node, index) in renderedContent" :key="index" :is="node"/>
 </template>
 ```
+Custom containers use the directive syntax. For example, `:::warning` creates a `containerDirective` node named `warning`.
+```vue
+<script setup lang="ts">
+    import { h } from 'vue'
+    import { parseMarkdown, renderAst2Vue } from '@mattholy/anymd'
+    import type { RenderOptions } from '@mattholy/anymd'
+
+    const markdown = `:::warning{title="Heads up"}
+Any markdown content.
+:::`
+
+    const renderConfig: RenderOptions = {
+        customRenderers: {
+            customContainers: (node, customContainerInfo) => {
+                if (customContainerInfo.name === 'warning') {
+                    return h('aside', { class: 'warning' }, {
+                        default: () => customContainerInfo.renderChildren()
+                    })
+                }
+
+                return h('div', {}, { default: () => customContainerInfo.renderChildren() })
+            }
+        }
+    }
+
+    const parsedAst = parseMarkdown(markdown)
+    const renderedContent = renderAst2Vue(parsedAst, renderConfig)
+</script>
+<template>
+    <component v-for="(node, index) in renderedContent" :key="index" :is="node"/>
+</template>
+```
 Another example with custom renderers using *NaiveUI*.
 ```vue
 <script setup lang="ts">
     import {
         NScrollbar, NText, NA, NH1, NH2, NH3, NIcon,
         NBlockquote, NCode, NOl, NUl, NP, NDivider,
-        NImage, NTable, NEquation, NButton
+        NImage, NTable, NEquation, NButton, NAlert
     } from 'naive-ui'
     import { parseMarkdown, renderAst2Vue } from '@mattholy/anymd'
     import type { RenderOptions } from '@mattholy/anymd'
 
-    const markdown = 'any markdown content'
+    const markdown = `:::warning{title="Heads up"}
+Any markdown content.
+:::`
     const renderConfig: RenderOptions = {
         customRenderers: {
             root: (node) => h('div', {}, { default: () => (node.children || []).flatMap((child) => renderAst2Vue(child, renderConfig)) }),
@@ -133,6 +167,13 @@ Another example with custom renderers using *NaiveUI*.
             listItem: (node) => h('li', null, { default: () => (node.children || []).flatMap((child) => renderAst2Vue(child, renderConfig)) }),
             html: (node) => h('div', { innerHTML: node.value }, {}),
             mention: (node) => h(NText, { type: 'info' }, { default: () => [node.value] }),
+            customContainers: (node, customContainerInfo) => h(NAlert, {
+                title: customContainerInfo.attributes.title || customContainerInfo.name,
+                type: 'warning',
+                bordered: false
+            }, {
+                default: () => customContainerInfo.renderChildren()
+            })
         }
     }
     const parsedAst = parseMarkdown(markdown)
@@ -148,7 +189,7 @@ Another example with custom renderers using *NaiveUI*.
 ## API
 ### Parse
 ```typescript
-parseMarkdown(markdownText: string, option?: ParserOptions): Node
+parseMarkdown(markdownText: string, option?: ParserOptions): RenderedNode
 
 interface ParserOptions {
     activityPubOptions?: activityPubOptions
@@ -189,10 +230,14 @@ export interface customComponents {
     tableCell?: Component
     delete?: Component
     html?: Component
+    containerDirective?: Component
+    leafDirective?: Component
+    textDirective?: Component
     mention?: Component
     inlineMath?: Component
     math?: Component
     hashtag?: Component
+    emoji?: Component
 }
 
 export interface customRenderers {
@@ -216,11 +261,24 @@ export interface customRenderers {
     tableCell?: (node: TableCellNode) => VNode
     delete?: (node: DeleteNode) => VNode
     html?: (node: HTMLNode) => VNode
+    customContainers?: customContainers
+    containerDirective?: (node: ContainerDirectiveNode) => VNode
+    leafDirective?: (node: LeafDirectiveNode) => VNode
+    textDirective?: (node: TextDirectiveNode) => VNode
     mention?: (node: MentionNode) => VNode
     inlineMath?: (node: InlineMathNode) => VNode
     math?: (node: MathNode) => VNode
     hashtag?: (node: HashTagNode) => VNode
+    emoji?: (node: EmojiNode) => VNode
 }
+
+export interface customContainerInfo {
+    name: string
+    attributes: Record<string, string | null | undefined>
+    renderChildren: () => VNode[]
+}
+
+export type customContainers = (node: ContainerDirectiveNode, customContainerInfo: customContainerInfo) => VNode | VNode[]
 ```
 
 ## 协议

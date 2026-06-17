@@ -162,6 +162,19 @@ describe('Node Types', () => {
         expect(htmlNode.value).toBe('<div>Hello, world!</div>')
     })
 
+    test('ContainerDirectiveNode should have correct type, name, attributes, and children', () => {
+        const containerDirectiveNode: types.ContainerDirectiveNode = {
+            type: 'containerDirective',
+            name: 'warning',
+            attributes: { title: 'Heads up' },
+            children: []
+        }
+        expect(containerDirectiveNode.type).toBe('containerDirective')
+        expect(containerDirectiveNode.name).toBe('warning')
+        expect(containerDirectiveNode.attributes).toEqual({ title: 'Heads up' })
+        expect(containerDirectiveNode.children).toEqual([])
+    })
+
     test('MentionNode should have correct type and value', () => {
         const mentionNode: types.MentionNode = {
             type: 'mention',

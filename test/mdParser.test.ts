@@ -126,6 +126,18 @@ describe('Function parseMarkdown', () => {
         expect(result.children[0]).toHaveProperty('type', 'math')
     })
 
+    test('should parse custom container directive', () => {
+        const input = ':::warning{title="Heads up"}\nhello **world**\n:::'
+        const result = parseMarkdown(input) as any
+
+        expect(result).toBeDefined()
+        expect(result.children[0]).toHaveProperty('type', 'containerDirective')
+        expect(result.children[0]).toHaveProperty('name', 'warning')
+        expect(result.children[0].attributes).toEqual({ title: 'Heads up' })
+        expect(result.children[0].children[0]).toHaveProperty('type', 'paragraph')
+        expect(result.children[0].children[0].children[1]).toHaveProperty('type', 'strong')
+    })
+
     test('Dealing with email addresses', () => {
         const input = 'Contact me at test@example.com'
         const result = parseMarkdown(input) as any

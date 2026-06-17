@@ -116,6 +116,27 @@ export interface HTMLNode extends Node {
     value: string
 }
 
+export interface ContainerDirectiveNode extends Node {
+    type: 'containerDirective'
+    name: string
+    attributes?: Record<string, string | null | undefined> | null
+    children: RenderedNode[]
+}
+
+export interface LeafDirectiveNode extends Node {
+    type: 'leafDirective'
+    name: string
+    attributes?: Record<string, string | null | undefined> | null
+    children: RenderedNode[]
+}
+
+export interface TextDirectiveNode extends Node {
+    type: 'textDirective'
+    name: string
+    attributes?: Record<string, string | null | undefined> | null
+    children: RenderedNode[]
+}
+
 export interface MentionNode extends Node {
     type: 'mention'
     value: string
@@ -157,6 +178,9 @@ export type RenderedNode =
     | TableCellNode
     | DeleteNode
     | HTMLNode
+    | ContainerDirectiveNode
+    | LeafDirectiveNode
+    | TextDirectiveNode
     | MentionNode
     | InlineMathNode
     | MathNode
@@ -189,6 +213,9 @@ export interface customComponents {
     tableCell?: Component
     delete?: Component
     html?: Component
+    containerDirective?: Component
+    leafDirective?: Component
+    textDirective?: Component
     mention?: Component
     inlineMath?: Component
     math?: Component
@@ -217,12 +244,24 @@ export interface customRenderers {
     tableCell?: (node: TableCellNode) => VNode
     delete?: (node: DeleteNode) => VNode
     html?: (node: HTMLNode) => VNode
+    customContainers?: customContainers
+    containerDirective?: (node: ContainerDirectiveNode) => VNode
+    leafDirective?: (node: LeafDirectiveNode) => VNode
+    textDirective?: (node: TextDirectiveNode) => VNode
     mention?: (node: MentionNode) => VNode
     inlineMath?: (node: InlineMathNode) => VNode
     math?: (node: MathNode) => VNode
     hashtag?: (node: HashTagNode) => VNode
     emoji?: (node: EmojiNode) => VNode
 }
+
+export interface customContainerInfo {
+    name: string
+    attributes: Record<string, string | null | undefined>
+    renderChildren: () => VNode[]
+}
+
+export type customContainers = (node: ContainerDirectiveNode, customContainerInfo: customContainerInfo) => VNode | VNode[]
 
 export interface ParserOptions {
     activityPubOptions?: activityPubOptions

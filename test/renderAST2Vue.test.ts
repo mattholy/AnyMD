@@ -227,6 +227,37 @@ describe('Workflow renderAst2Vue', () => {
         expect(result[0].children).toBe('<img src=x onerror=alert(1)>')
     })
 
+    test('renders custom container directives by default', () => {
+        const result = renderAst2Vue(parseMarkdown(':::warning{title="Heads up"}\nhello\n:::'))
+        const container = result[0].children![0]
+
+        expect(container.type).toBe('div')
+        expect(container.props).toHaveProperty('data-node-type', 'containerDirective')
+        expect(container.props).toHaveProperty('data-node-name', 'warning')
+        expect(container.props).toHaveProperty('data-node-style', 'default')
+        expect(container.props).not.toHaveProperty('title')
+        expect(container.children![0].type).toBe('p')
+        expect(container.children![0].children![0].children).toBe('hello')
+    })
+
+    test('uses custom container renderers from custom renderers', () => {
+        const result = renderAst2Vue(parseMarkdown(':::warning{title="Heads up"}\nhello\n:::'), {
+            customRenderers: {
+                customContainers: (node, customContainerInfo) => h(
+                    'aside',
+                    { 'data-container-title': customContainerInfo.attributes.title },
+                    { default: () => customContainerInfo.renderChildren() }
+                )
+            }
+        })
+        const container = result[0].children![0]
+
+        expect(container.type).toBe('aside')
+        expect(container.props).toHaveProperty('data-container-title', 'Heads up')
+        expect(container.children![0].type).toBe('p')
+        expect(container.children![0].children[0].children).toBe('hello')
+    })
+
     test('drops unsafe link urls but keeps relative urls', () => {
         const unsafe = renderAst2Vue({
             type: 'link',

@@ -1,5 +1,6 @@
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
+import remarkDirective from 'remark-directive'
 import remarkMath from 'remark-math'
 import remarkGfm from 'remark-gfm'
 import activityPubPlugin from './parser/activityPub.js'
@@ -8,6 +9,7 @@ import type { ParserOptions, RenderedNode } from './types.js'
 export function parseMarkdown(markdownText: string, option?: ParserOptions): RenderedNode {
   const processor = unified()
     .use(remarkParse)
+    .use(remarkDirective)
     .use(remarkGfm)
     .use(remarkMath)
     .use(activityPubPlugin, option?.activityPubOptions ?? {})

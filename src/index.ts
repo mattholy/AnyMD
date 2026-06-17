@@ -5,6 +5,8 @@ export type {
     RenderOptions,
     ParserOptions,
     activityPubOptions,
+    customContainerInfo,
     customComponents,
+    customContainers,
     customRenderers
 } from './types.js'
