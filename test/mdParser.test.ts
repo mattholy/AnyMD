@@ -90,6 +90,16 @@ describe('Function parseMarkdown', () => {
         }
     })
 
+    test('Dealing with ActivityPub identifier after normal text', () => {
+        const input = 'Hello @example'
+        const result = parseMarkdown(input, {}) as any
+
+        expect(result.children[0].children[0]).toHaveProperty('type', 'text')
+        expect(result.children[0].children[0].value).toBe('Hello ')
+        expect(result.children[0].children[1]).toHaveProperty('type', 'mention')
+        expect(result.children[0].children[1].value).toBe('@example')
+    })
+
     test('should parse GFM task list', () => {
         const input = '- [x] Task 1\n- [ ] Task 2'
         const result = parseMarkdown(input) as any

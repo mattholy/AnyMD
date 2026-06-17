@@ -284,4 +284,140 @@ describe('Workflow renderAst2Vue', () => {
         expect(result[0].props).toHaveProperty('src', undefined)
         expect(result[0].props).toHaveProperty('alt', 'bad')
     })
+
+    test('renders inline and block math with katex markup', () => {
+        const inline = renderAst2Vue({
+            type: 'inlineMath',
+            value: 'E=mc^2'
+        } as any)
+        const block = renderAst2Vue({
+            type: 'math',
+            value: 'E=mc^2'
+        } as any)
+
+        expect(inline[0].type).toBe('span')
+        expect(inline[0].props).toHaveProperty('data-node-type', 'inlineMath')
+        expect(inline[0].props!.innerHTML).toContain('katex')
+        expect(block[0].type).toBe('div')
+        expect(block[0].props).toHaveProperty('data-node-type', 'math')
+        expect(block[0].props!.innerHTML).toContain('katex-display')
+    })
+
+    test('renders emphasis, breaks, tables, delete, and activitypub nodes by default', () => {
+        const result = renderAst2Vue({
+            type: 'root',
+            children: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { type: 'emphasis', children: [{ type: 'text', value: 'soft' }] },
+                        { type: 'break' }
+                    ]
+                },
+                { type: 'thematicBreak' },
+                {
+                    type: 'table',
+                    align: [null],
+                    children: [
+                        {
+                            type: 'tableRow',
+                            children: [
+                                {
+                                    type: 'tableCell',
+                                    children: [{ type: 'delete', children: [{ type: 'text', value: 'old' }] }]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                { type: 'mention', value: '@alice@example.com' },
+                { type: 'hashtag', value: '#topic' },
+                { type: 'emoji', value: 'smile' }
+            ]
+        } as any)
+
+        expect(result[0].children![0].children![0].type).toBe('em')
+        expect(result[0].children![0].children![0].children![0].children).toBe('soft')
+        expect(result[0].children![0].children![1].type).toBe('br')
+        expect(result[0].children![1].type).toBe('hr')
+        expect(result[0].children![2].type).toBe('table')
+        expect(result[0].children![2].children![0].type).toBe('tr')
+        expect(result[0].children![2].children![0].children![0].type).toBe('td')
+        expect(result[0].children![2].children![0].children![0].children![0].type).toBe('del')
+        expect(result[0].children![2].children![0].children![0].children![0].children![0].children).toBe('old')
+        expect(result[0].children![3].children).toBe('@alice@example.com')
+        expect(result[0].children![4].children).toBe('#topic')
+        expect(result[0].children![5].children).toBe('smile')
+    })
+
+    test('renders leaf and text directives by default', () => {
+        const leaf = renderAst2Vue({
+            type: 'leafDirective',
+            name: 'badge',
+            children: [{ type: 'text', value: 'Stable' }]
+        } as any)
+        const text = renderAst2Vue({
+            type: 'textDirective',
+            name: 'mark',
+            children: [{ type: 'text', value: 'highlight' }]
+        } as any)
+
+        expect(leaf[0].type).toBe('div')
+        expect(leaf[0].props).toHaveProperty('data-node-type', 'leafDirective')
+        expect(leaf[0].props).toHaveProperty('data-node-name', 'badge')
+        expect(leaf[0].children![0].children).toBe('Stable')
+        expect(text[0].type).toBe('span')
+        expect(text[0].props).toHaveProperty('data-node-type', 'textDirective')
+        expect(text[0].props).toHaveProperty('data-node-name', 'mark')
+        expect(text[0].children![0].children).toBe('highlight')
+    })
+
+    test('uses custom components for child, value, and empty nodes', () => {
+        const withChildren = renderAst2Vue({
+            type: 'paragraph',
+            children: [{ type: 'text', value: 'custom child' }]
+        } as any, {
+            customComponents: {
+                paragraph: 'section' as any
+            }
+        })
+        const withValue = renderAst2Vue({
+            type: 'text',
+            value: 'custom value'
+        } as any, {
+            customComponents: {
+                text: 'strong' as any
+            }
+        })
+        const empty = renderAst2Vue({
+            type: 'thematicBreak'
+        } as any, {
+            customComponents: {
+                thematicBreak: 'hr' as any
+            }
+        })
+
+        expect(withChildren[0].type).toBe('section')
+        expect(withChildren[0].children![0].children).toBe('custom child')
+        expect(withValue[0].type).toBe('strong')
+        expect(withValue[0].children).toBe('custom value')
+        expect(empty[0].type).toBe('hr')
+        expect(empty[0].children).toEqual([])
+    })
+
+    test('drops empty urls and renders unknown nodes with the fallback message', () => {
+        const emptyLink = renderAst2Vue({
+            type: 'link',
+            url: '',
+            children: [{ type: 'text', value: 'empty' }]
+        } as any)
+        const unknown = renderAst2Vue({
+            type: 'unknownNode'
+        } as any)
+
+        expect(emptyLink[0].props).toHaveProperty('href', undefined)
+        expect(unknown[0].type).toBe('span')
+        expect(unknown[0].props).toHaveProperty('data-node-type', 'unknownNode')
+        expect(unknown[0].children).toContain('Node Not Recognized Error')
+    })
 })
