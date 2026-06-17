@@ -137,6 +137,23 @@ describe('Function parseMarkdown', () => {
         }
     })
 
+    test('does not crash when an email link is the first child', () => {
+        const input = 'test@example.com'
+        const result = parseMarkdown(input) as any
+
+        expect(result.children[0].children[0]).toHaveProperty('type', 'link')
+        expect(result.children[0].children[0].url).toBe('mailto:test@example.com')
+    })
+
+    test('keeps plain text as a single text node when activitypub patterns do not match', () => {
+        const input = 'plain text only'
+        const result = parseMarkdown(input) as any
+
+        expect(result.children[0].children).toHaveLength(1)
+        expect(result.children[0].children[0]).toHaveProperty('type', 'text')
+        expect(result.children[0].children[0].value).toBe('plain text only')
+    })
+
     test('should parse multiple email addresses and activitypub id', () => {
         const input = 'Emails: @test1@example.com, test2@example.com'
         const result = parseMarkdown(input) as any

@@ -1,9 +1,9 @@
-import { h, VNode } from 'vue'
-import { Node } from 'unist'
-import 'katex/dist/katex.min.css'
+import { h } from 'vue'
+import type { VNode } from 'vue'
+import type { Node } from 'unist'
 import katex from 'katex'
 
-import {
+import type {
     RootNode,
     ParagraphNode,
     TextNode,
@@ -31,7 +31,7 @@ import {
     RenderOptions,
     customComponents,
     customRenderers
-} from './types'
+} from './types.js'
 
 export function renderAst2Vue(ast: Node, options?: RenderOptions): VNode[] {
     const renderedNodes = renderPipe(ast as RenderedNode, options?.customRenderers, options?.customComponents)
@@ -64,13 +64,34 @@ const renderPipe = (node: RenderedNode, customRenderers?: customRenderers, custo
     }
 }
 
+const renderChildren = (node: { children?: RenderedNode[] }, customRenderers?: customRenderers, customComponents?: customComponents): VNode[] => {
+    return (node.children || []).flatMap((i) => renderPipe(i, customRenderers, customComponents))
+}
+
+const sanitizeUrl = (url?: string, allowedProtocols = ['http:', 'https:']): string | undefined => {
+    if (!url) {
+        return undefined
+    }
+
+    const trimmedUrl = url.trim()
+    const normalizedUrl = trimmedUrl.replace(/[\u0000-\u001F\u007F\s]+/g, '')
+    const protocolMatch = normalizedUrl.match(/^([a-z][a-z\d+.-]*):/i)
+
+    if (protocolMatch) {
+        const protocol = `${protocolMatch[1].toLowerCase()}:`
+        return allowedProtocols.includes(protocol) ? trimmedUrl : undefined
+    }
+
+    return trimmedUrl
+}
+
 const renderDefault = (node: RenderedNode, customRenderers?: customRenderers, customComponents?: customComponents): VNode | VNode[] => {
     switch (node.type) {
         case 'root':
             return h(
                 'div',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'inlineMath':
             try {
@@ -113,25 +134,25 @@ const renderDefault = (node: RenderedNode, customRenderers?: customRenderers, cu
             return h(
                 'p',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'heading':
             return h(
                 `h${node.depth}`,
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'emphasis':
             return h(
                 'em',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'strong':
             return h(
                 'strong',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'inlineCode':
             return h(
@@ -149,19 +170,19 @@ const renderDefault = (node: RenderedNode, customRenderers?: customRenderers, cu
             return h(
                 'blockquote',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'list':
             return h(
                 node.ordered ? 'ol' : 'ul',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'listItem':
             return h(
                 'li',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'thematicBreak':
             return h(
@@ -176,16 +197,18 @@ const renderDefault = (node: RenderedNode, customRenderers?: customRenderers, cu
                 { 'data-node-type': node.type, 'data-node-style': 'default' }
             )
         case 'link':
+            const href = sanitizeUrl(node.url, ['http:', 'https:', 'mailto:', 'tel:'])
             return h(
                 'a',
-                { href: node.url, title: node.title, 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { href, title: node.title, 'data-node-type': node.type, 'data-node-style': 'default' },
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'image':
+            const src = sanitizeUrl(node.url)
             return h(
                 'img',
                 {
-                    src: node.url,
+                    src,
                     alt: node.alt,
                     title: node.title,
                     'data-node-type': node.type,
@@ -196,34 +219,31 @@ const renderDefault = (node: RenderedNode, customRenderers?: customRenderers, cu
             return h(
                 'table',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'tableRow':
             return h(
                 'tr',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'tableCell':
             return h(
                 'td',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'delete':
             return h(
                 'del',
                 { 'data-node-type': node.type, 'data-node-style': 'default' },
-                { default: () => (node.children || []).flatMap((i) => renderDefault(i, customRenderers, customComponents)) }
+                { default: () => renderChildren(node, customRenderers, customComponents) }
             )
         case 'html':
             return h(
-                'div',
-                {
-                    innerHTML: node.value,
-                    'data-node-type': node.type,
-                    'data-node-style': 'default'
-                }
+                'span',
+                { 'data-node-type': node.type, 'data-node-style': 'default' },
+                { default: () => node.value }
             )
         case 'mention':
             return h(

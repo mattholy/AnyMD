@@ -2,9 +2,8 @@ import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkMath from 'remark-math'
 import remarkGfm from 'remark-gfm'
-import { Node } from 'unist'
-import activityPubPlugin from './parser/activityPub'
-import { ParserOptions, RenderedNode } from './types'
+import activityPubPlugin from './parser/activityPub.js'
+import type { ParserOptions, RenderedNode } from './types.js'
 
 export function parseMarkdown(markdownText: string, option?: ParserOptions): RenderedNode {
   const processor = unified()

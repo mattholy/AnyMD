@@ -1,6 +1,6 @@
 import { expect, test, describe } from 'vitest'
 import { renderAst2Vue, parseMarkdown } from '../src/index.ts'
-import { isVNode, VNode } from 'vue'
+import { h, isVNode, VNode } from 'vue'
 
 describe('Unit test for renderAst2Vue', () => {
 
@@ -200,5 +200,57 @@ describe('Workflow renderAst2Vue', () => {
         expect(result[0].children![0].children![0].children![0].props).toHaveProperty('data-node-style', 'default')
         expect(result[0].children![0].children![0].children![0].props).toHaveProperty('data-node-type', 'text')
         expect(result[0].children![0].children![0].children![0].children).toBe('GitHub')
+    })
+
+    test('applies custom renderers to nested default-rendered children', () => {
+        const result = renderAst2Vue(parseMarkdown('Hello **world**'), {
+            customRenderers: {
+                text: (node) => h('mark', { 'data-custom-text': node.value }, node.value)
+            }
+        })
+
+        expect(result[0].children![0].children![0].type).toBe('mark')
+        expect(result[0].children![0].children![0].props).toHaveProperty('data-custom-text', 'Hello ')
+        expect(result[0].children![0].children![1].type).toBe('strong')
+        expect(result[0].children![0].children![1].children![0].type).toBe('mark')
+        expect(result[0].children![0].children![1].children![0].props).toHaveProperty('data-custom-text', 'world')
+    })
+
+    test('renders raw html as escaped text by default', () => {
+        const result = renderAst2Vue({
+            type: 'html',
+            value: '<img src=x onerror=alert(1)>'
+        } as any)
+
+        expect(result[0].type).toBe('span')
+        expect(result[0].props).not.toHaveProperty('innerHTML')
+        expect(result[0].children).toBe('<img src=x onerror=alert(1)>')
+    })
+
+    test('drops unsafe link urls but keeps relative urls', () => {
+        const unsafe = renderAst2Vue({
+            type: 'link',
+            url: 'javascript:alert(1)',
+            children: [{ type: 'text', value: 'bad' }]
+        } as any)
+        const relative = renderAst2Vue({
+            type: 'link',
+            url: 'README.md',
+            children: [{ type: 'text', value: 'good' }]
+        } as any)
+
+        expect(unsafe[0].props).toHaveProperty('href', undefined)
+        expect(relative[0].props).toHaveProperty('href', 'README.md')
+    })
+
+    test('drops unsafe image urls', () => {
+        const result = renderAst2Vue({
+            type: 'image',
+            url: 'data:text/html,<script>alert(1)</script>',
+            alt: 'bad'
+        } as any)
+
+        expect(result[0].props).toHaveProperty('src', undefined)
+        expect(result[0].props).toHaveProperty('alt', 'bad')
     })
 })

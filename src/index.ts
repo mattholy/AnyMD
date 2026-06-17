@@ -1,3 +1,10 @@
-export { parseMarkdown } from './mdParser'
-export { renderAst2Vue } from './renderAST2Vue'
-export type { RenderedNode, RenderOptions, customComponents } from './types'
+export { parseMarkdown } from './mdParser.js'
+export { renderAst2Vue } from './renderAST2Vue.js'
+export type {
+    RenderedNode,
+    RenderOptions,
+    ParserOptions,
+    activityPubOptions,
+    customComponents,
+    customRenderers
+} from './types.js'

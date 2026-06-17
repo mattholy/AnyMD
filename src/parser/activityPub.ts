@@ -1,7 +1,7 @@
-import { Plugin } from 'unified'
+import type { Plugin } from 'unified'
 import { visit } from 'unist-util-visit'
-import { Node, Parent } from 'unist'
-import { LinkNode, TextNode, MentionNode, HashTagNode, activityPubOptions, RenderedNode, EmojiNode } from '../types'
+import type { Node } from 'unist'
+import type { LinkNode, TextNode, MentionNode, HashTagNode, activityPubOptions, RenderedNode, EmojiNode } from '../types.js'
 
 const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubOptions) => {
     if (!option?.notToParseActivityPub) {
@@ -11,7 +11,7 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                     if (parent && 'children' in parent && typeof index === 'number') {
                         let newChildren: RenderedNode[] = []
                         let elder = parent.children[index - 1]
-                        if ('value' in elder && typeof elder.value === 'string' && elder.value.endsWith('@')) {
+                        if (elder && 'value' in elder && typeof elder.value === 'string' && elder.value.endsWith('@') && node.children[0]) {
                             newChildren = parent.children
                             newChildren[index] = node.children[0]
                             for (let i = 0; i < newChildren.length - 1; i++) {
@@ -37,27 +37,33 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                 if (parent && parent.type === 'link') {
                     return
                 }
-                const hashtagRegex = /(?<=^|\s)(#[\p{L}0-9]+)(?=\P{L}|$)/gu
+                const hashtagRegex = /(^|\s)(#[\p{L}0-9]+)(?=\P{L}|$)/gu
                 let match
                 let newChildren: Node[] = []
                 let lastIndex = 0
+                let hasMatch = false
+
                 while ((match = hashtagRegex.exec(node.value)) !== null) {
-                    if (match.index > lastIndex) {
+                    hasMatch = true
+                    const prefix = match[1]
+                    const hashtagValue = match[2]
+                    const hashtagIndex = match.index + prefix.length
+
+                    if (hashtagIndex > lastIndex) {
                         newChildren.push({
                             type: 'text',
-                            value: node.value.slice(lastIndex, match.index),
+                            value: node.value.slice(lastIndex, hashtagIndex),
                             position: undefined,
                         } as TextNode)
                     }
 
-                    const hashtagValue = match[1]
                     newChildren.push({
                         type: 'hashtag',
                         value: hashtagValue,
                         position: undefined,
                     } as HashTagNode)
 
-                    lastIndex = hashtagRegex.lastIndex
+                    lastIndex = hashtagIndex + hashtagValue.length
                 }
 
                 if (lastIndex < node.value.length) {
@@ -68,7 +74,7 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                     } as TextNode)
                 }
 
-                if (newChildren.length > 0 && parent && typeof index === 'number' && 'children' in parent) {
+                if (hasMatch && parent && typeof index === 'number' && 'children' in parent) {
                     parent.children.splice(index, 1, ...(newChildren as RenderedNode[]))
                 }
             })
@@ -77,28 +83,33 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                 if (parent && parent.type === 'link') {
                     return
                 }
-                const emojiRegex = /(?<=^|\s):[a-zA-Z0-9_]+:(?=\s|$)/g
+                const emojiRegex = /(^|\s):([a-zA-Z0-9_]+):(?=\s|$)/g
                 let match
                 let newChildren: Node[] = []
                 let lastIndex = 0
+                let hasMatch = false
 
                 while ((match = emojiRegex.exec(node.value)) !== null) {
-                    if (match.index > lastIndex) {
+                    hasMatch = true
+                    const prefix = match[1]
+                    const emojiValue = match[2]
+                    const emojiIndex = match.index + prefix.length
+
+                    if (emojiIndex > lastIndex) {
                         newChildren.push({
                             type: 'text',
-                            value: node.value.slice(lastIndex, match.index),
+                            value: node.value.slice(lastIndex, emojiIndex),
                             position: undefined,
                         } as TextNode)
                     }
 
-                    const emojiValue = match[0]
                     newChildren.push({
                         type: 'emoji',
-                        value: emojiValue.slice(1, -1),
+                        value: emojiValue,
                         position: undefined,
                     } as EmojiNode)
 
-                    lastIndex = emojiRegex.lastIndex
+                    lastIndex = emojiIndex + emojiValue.length + 2
                 }
 
                 if (lastIndex < node.value.length) {
@@ -109,7 +120,7 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                     } as TextNode)
                 }
 
-                if (newChildren.length > 0 && parent && typeof index === 'number' && 'children' in parent) {
+                if (hasMatch && parent && typeof index === 'number' && 'children' in parent) {
                     parent.children.splice(index, 1, ...(newChildren as RenderedNode[]))
                 }
             })
@@ -118,22 +129,27 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                 if (parent && parent.type === 'link') {
                     return
                 }
-                const mentionRegex = /(?<=^|\s)@[a-zA-Z0-9_]+(?:@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})?(?=\s|$)/g
+                const mentionRegex = /(^|\s)(@[a-zA-Z0-9_]+(?:@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})?)(?=\s|$)/g
                 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
                 let match
                 let newChildren: Node[] = []
                 let lastIndex = 0
+                let hasMatch = false
 
                 while ((match = mentionRegex.exec(node.value)) !== null) {
-                    if (match.index > lastIndex) {
+                    hasMatch = true
+                    const prefix = match[1]
+                    const mentionValue = match[2]
+                    const mentionIndex = match.index + prefix.length
+
+                    if (mentionIndex > lastIndex) {
                         newChildren.push({
                             type: 'text',
-                            value: node.value.slice(lastIndex, match.index),
+                            value: node.value.slice(lastIndex, mentionIndex),
                             position: undefined,
                         } as TextNode)
                     }
 
-                    const mentionValue = match[0]
                     if (emailRegex.test(mentionValue)) {
                         newChildren.push({
                             type: 'text',
@@ -148,7 +164,7 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                         } as MentionNode)
                     }
 
-                    lastIndex = mentionRegex.lastIndex
+                    lastIndex = mentionIndex + mentionValue.length
                 }
 
                 if (lastIndex < node.value.length) {
@@ -159,7 +175,7 @@ const activityPubMention: Plugin<[activityPubOptions?]> = (option?: activityPubO
                     } as TextNode)
                 }
 
-                if (newChildren.length > 0 && parent && typeof index === 'number' && 'children' in parent) {
+                if (hasMatch && parent && typeof index === 'number' && 'children' in parent) {
                     parent.children.splice(index, 1, ...(newChildren as RenderedNode[]))
                 }
             })

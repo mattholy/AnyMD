@@ -1,5 +1,5 @@
-import { Node } from 'unist'
-import { VNode, Component } from 'vue'
+import type { Node } from 'unist'
+import type { VNode, Component } from 'vue'
 
 export interface RootNode extends Node {
     type: 'root'
